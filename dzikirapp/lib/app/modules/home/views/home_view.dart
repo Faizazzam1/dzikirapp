@@ -1,0 +1,278 @@
+import 'package:flutter/material.dart';
+
+import 'package:get/get.dart';
+
+import '../controllers/home_controller.dart';
+
+class HomeView extends GetView<HomeController> {
+  const HomeView({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('4 Mei', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        backgroundColor: Color(0xFF188359),
+        toolbarHeight: 80,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 17),
+            child: IconButton(
+              onPressed: () {
+                print("Jam");
+              },
+              icon: Icon(Icons.access_time, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            height: 120,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Color(0xFF188359),
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(7)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Today",
+                        style: TextStyle(color: Colors.white, fontSize: 27),
+                      ),
+                      Text(
+                        "6 Dzikir",
+                        style: TextStyle(color: Colors.white70, fontSize: 15),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Tambah Dzikir",
+                                    style: TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  SizedBox(height: 25),
+
+                                  Text(
+                                    "Ucapan Dzikir",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+
+                                  SizedBox(height: 8),
+
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Masukan Dzikir",
+                                      filled: true,
+                                      fillColor: Colors.grey[300],
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                    ),
+                                  ),
+
+                                  SizedBox(height: 20),
+
+                                  Text(
+                                    "Jumlah Dzikir",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+
+                                  SizedBox(height: 8),
+
+                                  TextField(
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      hintText: "...",
+                                      filled: true,
+                                      fillColor: Colors.grey[300],
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                    ),
+                                  ),
+
+                                  SizedBox(height: 30),
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Get.back();
+                                        },
+                                        child: Text(
+                                          "Batal",
+                                          style: TextStyle(
+                                            color: Color(0xFF188359),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+
+                                      SizedBox(width: 12),
+
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color(0xFF188359),
+                                          foregroundColor: Colors.white,
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 28,
+                                            vertical: 12,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              30,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Text("Lanjut"),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Color(0xFF188359),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      "Add New",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 20),
+          SizedBox(
+            height: 70,
+            child: ListView.builder(
+              itemCount: controller.hari.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                final data = controller.hari[index];
+                return Container(
+                  width: 70,
+                  margin: EdgeInsets.only(left: 30),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF188359),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        data["hari"]!,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Text(
+                        data["tanggal"]!,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            child: Row(
+              children: [Text("My Dzikir", style: TextStyle(fontSize: 22))],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: controller.dataDzikir.length,
+              itemBuilder: (context, index) {
+                final dataDzikir = controller.dataDzikir[index];
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          dataDzikir['title'].toString(),
+                          style: TextStyle(fontSize: 18),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+
+                      Checkbox(
+                        value: dataDzikir["isComplete"] as bool,
+                        onChanged: (value) {
+                          controller.dataDzikir[index]["isComplete"] = value!;
+                          controller.dataDzikir.refresh();
+                        },
+                        activeColor: Color(0xFF188359),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
