@@ -55,17 +55,24 @@ class CounterView extends GetView<CounterController> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                          children: const [
-                            Icon(Icons.arrow_back_ios, color: Colors.white),
-
-                            Icon(Icons.more_horiz, color: Colors.white),
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                await controller.updateDzikir();
+                                Get.back();
+                              },
+                              child: Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.white,
+                              ),
+                            ),
                           ],
                         ),
 
                         const SizedBox(height: 20),
 
-                        const Text(
-                          "Dzikir Pagi",
+                        Text(
+                          controller.args.ucapan,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 28,
@@ -94,58 +101,68 @@ class CounterView extends GetView<CounterController> {
 
                   const SizedBox(height: 35),
 
-                  const Text(
-                    "Progress Dzikir: 75%",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  Obx(
+                    () => Text(
+                      "Progress Dzikir: ${controller.percentage.toInt()}%",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
 
                   const SizedBox(height: 40),
 
                   // CIRCLE
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SizedBox(
-                        width: 220,
-                        height: 220,
+                  Obx(() {
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 220,
+                          height: 220,
 
-                        child: CircularProgressIndicator(
-                          value: 0.75,
-                          strokeWidth: 8,
-                          backgroundColor: Colors.grey.shade300,
+                          child: CircularProgressIndicator(
+                            value: controller.percentage.value.toDouble() / 100,
+                            strokeWidth: 8,
+                            backgroundColor: Colors.grey.shade300,
 
-                          valueColor: const AlwaysStoppedAnimation<Color>(
-                            Color(0xFF188359),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color(0xFF188359),
+                            ),
                           ),
                         ),
-                      ),
 
-                      // POWER BUTTON
-                      Container(
-                        width: 95,
-                        height: 95,
+                        // POWER BUTTON
+                        GestureDetector(
+                          onTap: () => controller.counter(),
+                          child: Container(
+                            width: 95,
+                            height: 95,
 
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF188359),
-                          shape: BoxShape.circle,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF188359),
+                              shape: BoxShape.circle,
 
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
-                              blurRadius: 15,
-                              offset: const Offset(0, 8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.15),
+                                  blurRadius: 15,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
 
-                        child: const Icon(
-                          Icons.touch_app,
-                          color: Colors.white,
-                          size: 42,
+                            child: const Icon(
+                              Icons.touch_app,
+                              color: Colors.white,
+                              size: 42,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    );
+                  }),
 
                   const SizedBox(height: 50),
 

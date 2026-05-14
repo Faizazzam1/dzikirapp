@@ -1,3 +1,5 @@
+import 'package:dzikirapp/app/modules/home/views/widgets/list_date.dart';
+import 'package:dzikirapp/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -10,7 +12,12 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('4 Mei', style: TextStyle(color: Colors.white)),
+        title: Obx(
+          () => Text(
+            controller.todayHeader.value,
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
         centerTitle: true,
         backgroundColor: Color(0xFF188359),
         toolbarHeight: 80,
@@ -91,6 +98,7 @@ class HomeView extends GetView<HomeController> {
                                   SizedBox(height: 8),
 
                                   TextField(
+                                    controller: controller.dzikirC,
                                     decoration: InputDecoration(
                                       hintText: "Masukan Dzikir",
                                       filled: true,
@@ -105,13 +113,14 @@ class HomeView extends GetView<HomeController> {
                                   SizedBox(height: 20),
 
                                   Text(
-                                    "Jumlah Dzikir",
+                                    "Target Dzikir",
                                     style: TextStyle(fontSize: 14),
                                   ),
 
                                   SizedBox(height: 8),
 
                                   TextField(
+                                    controller: controller.targetC,
                                     keyboardType: TextInputType.number,
                                     decoration: InputDecoration(
                                       hintText: "...",
@@ -144,23 +153,28 @@ class HomeView extends GetView<HomeController> {
 
                                       SizedBox(width: 12),
 
-                                      ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Color(0xFF188359),
-                                          foregroundColor: Colors.white,
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 28,
-                                            vertical: 12,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              30,
+                                      Obx(() {
+                                        return ElevatedButton(
+                                          onPressed: () {
+                                            controller.addDzikir();
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color(0xFF188359),
+                                            foregroundColor: Colors.white,
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 28,
+                                              vertical: 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
                                             ),
                                           ),
-                                        ),
-                                        child: Text("Lanjut"),
-                                      ),
+                                          child: controller.isLoading.value
+                                              ? CircularProgressIndicator()
+                                              : Text("Lanjut"),
+                                        );
+                                      }),
                                     ],
                                   ),
                                 ],
@@ -194,41 +208,7 @@ class HomeView extends GetView<HomeController> {
             ),
           ),
           SizedBox(height: 20),
-          SizedBox(
-            height: 70,
-            child: ListView.builder(
-              itemCount: controller.hari.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                final data = controller.hari[index];
-                return Container(
-                  width: 70,
-                  margin: EdgeInsets.only(left: 30),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF188359),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        data["hari"]!,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      Text(
-                        data["tanggal"]!,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
+          ListDate(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
             child: Row(
@@ -236,39 +216,66 @@ class HomeView extends GetView<HomeController> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: controller.dataDzikir.length,
-              itemBuilder: (context, index) {
-                final dataDzikir = controller.dataDzikir[index];
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 30, vertical: 8),
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          dataDzikir['title'].toString(),
-                          style: TextStyle(fontSize: 18),
-                          overflow: TextOverflow.ellipsis,
+            child: RefreshIndicator(
+              onRefresh: () => controller.getDzikir(),
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return ListView.builder(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  itemCount: controller.selectedDzikir.length,
+
+                  itemBuilder: (context, index) {
+                    final dataDzikir = controller.selectedDzikir.value[index];
+                    final isComplete = dataDzikir.jumlah == dataDzikir.target;
+
+                    if (controller.dataDzikir.isEmpty) {
+                      return Center(child: Text("Belum ada dzikir"));
+                    }
+
+                    return GestureDetector(
+                      onTap: () =>
+                          Get.toNamed(Routes.COUNTER, arguments: dataDzikir),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 8,
+                        ),
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                dataDzikir.ucapan.toString(),
+                                style: TextStyle(fontSize: 18),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            isComplete
+                                ? Checkbox(
+                                    value: isComplete,
+                                    onChanged: (value) {},
+                                    activeColor: Color(0xFF188359),
+                                  )
+                                : Row(
+                                    children: [
+                                      Text(dataDzikir.jumlah.toString()),
+                                      Text("/"),
+                                      Text(dataDzikir.target.toString()),
+                                    ],
+                                  ),
+                          ],
                         ),
                       ),
-
-                      Checkbox(
-                        value: dataDzikir["isComplete"] as bool,
-                        onChanged: (value) {
-                          controller.dataDzikir[index]["isComplete"] = value!;
-                          controller.dataDzikir.refresh();
-                        },
-                        activeColor: Color(0xFF188359),
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 );
-              },
+              }),
             ),
           ),
         ],
