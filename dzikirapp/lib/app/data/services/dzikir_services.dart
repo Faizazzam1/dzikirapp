@@ -49,4 +49,24 @@ class DzikirServices {
   Future<void> updateJumlah(int id, int jumlah) async {
     await supabase.from('dzikir').update({'jumlah': jumlah}).eq('id', id);
   }
+
+  Future<List<DzikirModel>> getHistoryDzikir() async {
+    try {
+      final today = DateTime.now();
+
+      final startToday = DateTime(today.year, today.month, today.day);
+
+      final response = await supabase
+          .from('dzikir')
+          .select()
+          .eq('user_id', userId!)
+          .lt('created_at', startToday.toIso8601String())
+          .order('created_at', ascending: false);
+
+      return response.map((e) => DzikirModel.fromJson(e)).toList();
+    } catch (e) {
+      print('DZIKIR SERVICE ERROR: $e');
+      return [];
+    }
+  }
 }

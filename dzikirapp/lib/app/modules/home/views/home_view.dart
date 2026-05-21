@@ -26,6 +26,7 @@ class HomeView extends GetView<HomeController> {
             padding: const EdgeInsets.only(right: 17),
             child: IconButton(
               onPressed: () {
+                Get.toNamed(Routes.HISTORY);
                 print("Jam");
               },
               icon: Icon(Icons.access_time, color: Colors.white),
