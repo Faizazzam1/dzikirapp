@@ -103,7 +103,7 @@ class CounterView extends GetView<CounterController> {
 
                   Obx(
                     () => Text(
-                      "Progress Dzikir: ${controller.percentage.toInt()}%",
+                      "Progress Dzikir: ${controller.jumlah}/${controller.args.target}",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -123,7 +123,7 @@ class CounterView extends GetView<CounterController> {
                           height: 220,
 
                           child: CircularProgressIndicator(
-                            value: controller.percentage.value.toDouble() / 100,
+                            value: controller.percentage.value / 100,
                             strokeWidth: 8,
                             backgroundColor: Colors.grey.shade300,
 
@@ -134,31 +134,8 @@ class CounterView extends GetView<CounterController> {
                         ),
 
                         // POWER BUTTON
-                        GestureDetector(
+                        _AnimatedCounterButton(
                           onTap: () => controller.counter(),
-                          child: Container(
-                            width: 95,
-                            height: 95,
-
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF188359),
-                              shape: BoxShape.circle,
-
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 15,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
-
-                            child: const Icon(
-                              Icons.touch_app,
-                              color: Colors.white,
-                              size: 42,
-                            ),
-                          ),
                         ),
                       ],
                     );
@@ -218,6 +195,50 @@ class CounterView extends GetView<CounterController> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AnimatedCounterButton extends StatefulWidget {
+  final VoidCallback onTap;
+  const _AnimatedCounterButton({required this.onTap});
+
+  @override
+  State<_AnimatedCounterButton> createState() => _AnimatedCounterButtonState();
+}
+
+class _AnimatedCounterButtonState extends State<_AnimatedCounterButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        widget.onTap();
+      },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: AnimatedScale(
+        scale: _isPressed ? 0.9 : 1.0,
+        duration: const Duration(milliseconds: 20),
+        child: Container(
+          width: 95,
+          height: 95,
+          decoration: BoxDecoration(
+            color: const Color(0xFF188359),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: const Icon(Icons.touch_app, color: Colors.white, size: 42),
         ),
       ),
     );

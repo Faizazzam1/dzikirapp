@@ -1,3 +1,4 @@
+import 'package:dzikirapp/app/core/utils/snackbar_handler.dart';
 import 'package:dzikirapp/app/data/services/dzikir_services.dart';
 import 'package:get/get.dart';
 
@@ -31,6 +32,7 @@ class HistoryController extends GetxController {
       isLoading.value = false;
     } catch (e) {
       isLoading.value = false;
+      SnackbarHandler.showError('Gagal Memuat Riwayat', e.toString());
       print('DZIKIR SERVICE ERROR: $e');
     }
   }

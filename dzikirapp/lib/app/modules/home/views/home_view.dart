@@ -1,3 +1,4 @@
+import 'package:dzikirapp/app/core/utils/input_validators.dart';
 import 'package:dzikirapp/app/modules/home/views/widgets/list_date.dart';
 import 'package:dzikirapp/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -77,108 +78,113 @@ class HomeView extends GetView<HomeController> {
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(20),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Tambah Dzikir",
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-
-                                  SizedBox(height: 25),
-
-                                  Text(
-                                    "Ucapan Dzikir",
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-
-                                  SizedBox(height: 8),
-
-                                  TextField(
-                                    controller: controller.dzikirC,
-                                    decoration: InputDecoration(
-                                      hintText: "Masukan Dzikir",
-                                      filled: true,
-                                      fillColor: Colors.grey[300],
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: BorderSide.none,
+                              child: Form(
+                                key: controller.formKey,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Tambah Dzikir",
+                                      style: TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
 
-                                  SizedBox(height: 20),
+                                    SizedBox(height: 25),
 
-                                  Text(
-                                    "Target Dzikir",
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-
-                                  SizedBox(height: 8),
-
-                                  TextField(
-                                    controller: controller.targetC,
-                                    keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                      hintText: "...",
-                                      filled: true,
-                                      fillColor: Colors.grey[300],
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: BorderSide.none,
-                                      ),
+                                    Text(
+                                      "Ucapan Dzikir",
+                                      style: TextStyle(fontSize: 14),
                                     ),
-                                  ),
 
-                                  SizedBox(height: 30),
+                                    SizedBox(height: 8),
 
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Get.back();
-                                        },
-                                        child: Text(
-                                          "Batal",
-                                          style: TextStyle(
-                                            color: Color(0xFF188359),
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                    TextFormField(
+                                      controller: controller.dzikirC,
+                                      validator: (value) => InputValidators.validateRequired(value, 'Ucapan Dzikir'),
+                                      decoration: InputDecoration(
+                                        hintText: "Masukan Dzikir",
+                                        filled: true,
+                                        fillColor: Colors.grey[300],
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                          borderSide: BorderSide.none,
                                         ),
                                       ),
+                                    ),
 
-                                      SizedBox(width: 12),
+                                    SizedBox(height: 20),
 
-                                      Obx(() {
-                                        return ElevatedButton(
+                                    Text(
+                                      "Target Dzikir",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+
+                                    SizedBox(height: 8),
+
+                                    TextFormField(
+                                      controller: controller.targetC,
+                                      keyboardType: TextInputType.number,
+                                      validator: (value) => InputValidators.validateNumeric(value, 'Target Dzikir'),
+                                      decoration: InputDecoration(
+                                        hintText: "...",
+                                        filled: true,
+                                        fillColor: Colors.grey[300],
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 30),
+
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        TextButton(
                                           onPressed: () {
-                                            controller.addDzikir();
+                                            Get.back();
                                           },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color(0xFF188359),
-                                            foregroundColor: Colors.white,
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 28,
-                                              vertical: 12,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
+                                          child: Text(
+                                            "Batal",
+                                            style: TextStyle(
+                                              color: Color(0xFF188359),
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          child: controller.isLoading.value
-                                              ? CircularProgressIndicator()
-                                              : Text("Lanjut"),
-                                        );
-                                      }),
-                                    ],
-                                  ),
-                                ],
+                                        ),
+
+                                        SizedBox(width: 12),
+
+                                        Obx(() {
+                                          return ElevatedButton(
+                                            onPressed: () {
+                                              controller.addDzikir();
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Color(0xFF188359),
+                                              foregroundColor: Colors.white,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 28,
+                                                vertical: 12,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                              ),
+                                            ),
+                                            child: controller.isLoading.value
+                                                ? CircularProgressIndicator(color: Colors.white)
+                                                : Text("Lanjut"),
+                                          );
+                                        }),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -223,17 +229,16 @@ class HomeView extends GetView<HomeController> {
                 if (controller.isLoading.value) {
                   return Center(child: CircularProgressIndicator());
                 }
+                if (controller.selectedDzikir.isEmpty) {
+                  return Center(child: Text("Belum ada dzikir"));
+                }
                 return ListView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
                   itemCount: controller.selectedDzikir.length,
 
                   itemBuilder: (context, index) {
-                    final dataDzikir = controller.selectedDzikir.value[index];
+                    final dataDzikir = controller.selectedDzikir[index];
                     final isComplete = dataDzikir.jumlah == dataDzikir.target;
-
-                    if (controller.dataDzikir.isEmpty) {
-                      return Center(child: Text("Belum ada dzikir"));
-                    }
 
                     return GestureDetector(
                       onTap: () =>

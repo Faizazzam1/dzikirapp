@@ -5,22 +5,21 @@ class DzikirServices {
   final supabase = Supabase.instance.client.schema('dzikir');
   final userId = Supabase.instance.client.auth.currentSession?.user.id;
 
-  Future<void> addDzikir(String dzikir, int target) async {
-    try {
-      await supabase
-          .from('dzikir')
-          .insert(
-            DzikirModel(
-              ucapan: dzikir,
-              target: target,
-              jumlah: 0,
-              userId: userId,
-            ).toJson(),
-          );
-      print('DZIKIR SERVICE SUCCESS');
-    } catch (e) {
-      print('DZIKIR SERVICE ERROR: $e');
-    }
+  Future<DzikirModel> addDzikir(String dzikir, int target) async {
+    final response = await supabase
+        .from('dzikir')
+        .insert(
+          DzikirModel(
+            ucapan: dzikir,
+            target: target,
+            jumlah: 0,
+            userId: userId,
+          ).toJson(),
+        )
+        .select()
+        .single();
+    print('DZIKIR SERVICE SUCCESS');
+    return DzikirModel.fromJson(response);
   }
 
   Future<List<DzikirModel>> getDzikir() async {

@@ -14,6 +14,9 @@ class HistoryView extends GetView<HistoryController> {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
+        if (controller.dzikirList.isEmpty) {
+          return const Center(child: Text('Belum ada dzikir sebelumnya'));
+        }
         return RefreshIndicator(
           onRefresh: () async => controller.getHistoryDzikir(),
           child: ListView.builder(
@@ -22,9 +25,6 @@ class HistoryView extends GetView<HistoryController> {
             itemBuilder: (context, index) {
               final dzikir = controller.dzikirList[index];
 
-              if (controller.dzikirList.isEmpty) {
-                return const Center(child: Text('Belum ada dzikir sebelumnya'));
-              }
               return ListTile(
                 title: Text(dzikir.ucapan),
                 subtitle: Text(dzikir.target.toString()),

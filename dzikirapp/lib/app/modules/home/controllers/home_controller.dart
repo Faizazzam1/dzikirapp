@@ -1,3 +1,4 @@
+import 'package:dzikirapp/app/core/utils/snackbar_handler.dart';
 import 'package:dzikirapp/app/data/functions/date_helper.dart';
 import 'package:dzikirapp/app/data/models/dzikir_model.dart';
 import 'package:dzikirapp/app/data/services/dzikir_services.dart';
@@ -11,6 +12,7 @@ class HomeController extends GetxController {
   final dateHelper = DateHelper();
   final dzikirServices = DzikirServices();
 
+  final formKey = GlobalKey<FormState>();
   final dzikirC = TextEditingController();
   final targetC = TextEditingController();
 
@@ -72,22 +74,31 @@ class HomeController extends GetxController {
   }
 
   Future<void> addDzikir() async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+
     isLoading.value = true;
     try {
-      await dzikirServices.addDzikir(dzikirC.text, int.parse(targetC.text));
+      final ucapan = dzikirC.text;
+      final target = int.parse(targetC.text);
+
+      final newDzikir = await dzikirServices.addDzikir(ucapan, target);
       isLoading.value = false;
       Get.back();
+      SnackbarHandler.showSuccess('Berhasil', 'Dzikir berhasil ditambahkan');
+      
+      dzikirC.clear();
+      targetC.clear();
+      
       Get.toNamed(
         Routes.COUNTER,
-        arguments: DzikirModel(
-          ucapan: dzikirC.text,
-          target: int.parse(targetC.text),
-          jumlah: 0,
-        ),
+        arguments: newDzikir,
       );
     } catch (e) {
       isLoading.value = false;
-      print('DZIKIR SERVICE ERROR: $e');
+      SnackbarHandler.showError('Gagal Menambahkan', e.toString());
+      print('DZIKIR CONTROLLER ERROR: $e');
     }
   }
 
@@ -105,9 +116,11 @@ class HomeController extends GetxController {
         final todayDate = DateTime(now.year, now.month, now.day);
         return itemDate.isBefore(todayDate);
       }).toList();
+      selectDzikir(selectedDate.value);
       isLoading.value = false;
     } catch (e) {
       isLoading.value = false;
+      SnackbarHandler.showError('Gagal Memuat Data', e.toString());
       print('DZIKIR SERVICE ERROR: $e');
     }
   }
