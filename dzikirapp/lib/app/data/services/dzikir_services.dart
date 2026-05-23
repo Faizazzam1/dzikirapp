@@ -5,7 +5,7 @@ class DzikirServices {
   final supabase = Supabase.instance.client.schema('dzikir');
   final userId = Supabase.instance.client.auth.currentSession?.user.id;
 
-  Future<DzikirModel> addDzikir(String dzikir, int target) async {
+  Future<DzikirModel> addDzikir(String dzikir, int target, DateTime createdAt) async {
     final response = await supabase
         .from('dzikir')
         .insert(
@@ -14,6 +14,7 @@ class DzikirServices {
             target: target,
             jumlah: 0,
             userId: userId,
+            createdAt: createdAt,
           ).toJson(),
         )
         .select()

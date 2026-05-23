@@ -22,15 +22,23 @@ class HomeView extends GetView<HomeController> {
         centerTitle: true,
         backgroundColor: Color(0xFF188359),
         toolbarHeight: 80,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 17),
+          child: IconButton(
+            onPressed: () {
+              Get.toNamed(Routes.HISTORY);
+            },
+            icon: Icon(Icons.access_time, color: Colors.white),
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 17),
             child: IconButton(
               onPressed: () {
-                Get.toNamed(Routes.HISTORY);
-                print("Jam");
+                controller.logout();
               },
-              icon: Icon(Icons.access_time, color: Colors.white),
+              icon: Icon(Icons.logout, color: Colors.white),
             ),
           ),
         ],
@@ -241,8 +249,10 @@ class HomeView extends GetView<HomeController> {
                     final isComplete = dataDzikir.jumlah == dataDzikir.target;
 
                     return GestureDetector(
-                      onTap: () =>
-                          Get.toNamed(Routes.COUNTER, arguments: dataDzikir),
+                      onTap: () async {
+                        await Get.toNamed(Routes.COUNTER, arguments: dataDzikir);
+                        controller.getDzikir();
+                      },
                       child: Container(
                         margin: EdgeInsets.symmetric(
                           horizontal: 30,

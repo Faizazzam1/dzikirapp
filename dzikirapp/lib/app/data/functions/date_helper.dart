@@ -33,6 +33,15 @@ class DateHelper {
     return '$day $month';
   }
 
+  static String formatFullDate(DateTime date) {
+    final dayName = hari[date.weekday - 1];
+    final dayNumber = date.day;
+    final monthName = bulan[date.month - 1];
+    final year = date.year;
+
+    return '$dayName, $dayNumber $monthName $year';
+  }
+
   List<Map<String, dynamic>> getNext7Days() {
     final now = DateTime.now();
 

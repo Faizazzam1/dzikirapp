@@ -1,3 +1,4 @@
+import 'package:dzikirapp/app/data/functions/date_helper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -24,10 +25,19 @@ class HistoryView extends GetView<HistoryController> {
             itemCount: controller.dzikirList.length,
             itemBuilder: (context, index) {
               final dzikir = controller.dzikirList[index];
+              final dateStr = dzikir.createdAt != null 
+                  ? DateHelper.formatFullDate(dzikir.createdAt!) 
+                  : '';
 
               return ListTile(
-                title: Text(dzikir.ucapan),
-                subtitle: Text(dzikir.target.toString()),
+                title: Text(dzikir.ucapan, style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Target: ${dzikir.target}"),
+                    Text(dateStr, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  ],
+                ),
               );
             },
           ),

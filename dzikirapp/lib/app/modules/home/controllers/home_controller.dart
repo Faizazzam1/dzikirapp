@@ -37,6 +37,7 @@ class HomeController extends GetxController {
 
   @override
   void onInit() async {
+    print('HOME CONTROLLER INIT');
     todayHeader.value = dateHelper.getTodayDateAndMonth();
     next7Days.value = dateHelper.getNext7Days();
     await getDzikir();
@@ -54,7 +55,6 @@ class HomeController extends GetxController {
           table: 'dzikir',
           callback: (payload) async {
             print('REALTIME DZIKIR: $payload');
-
             await getDzikir();
           },
         )
@@ -83,18 +83,19 @@ class HomeController extends GetxController {
       final ucapan = dzikirC.text;
       final target = int.parse(targetC.text);
 
-      final newDzikir = await dzikirServices.addDzikir(ucapan, target);
+      final newDzikir = await dzikirServices.addDzikir(ucapan, target, selectedDate.value);
       isLoading.value = false;
       Get.back();
       SnackbarHandler.showSuccess('Berhasil', 'Dzikir berhasil ditambahkan');
-      
+
       dzikirC.clear();
       targetC.clear();
-      
-      Get.toNamed(
+
+      await Get.toNamed(
         Routes.COUNTER,
         arguments: newDzikir,
       );
+      getDzikir();
     } catch (e) {
       isLoading.value = false;
       SnackbarHandler.showError('Gagal Menambahkan', e.toString());
@@ -135,5 +136,15 @@ class HomeController extends GetxController {
           createdAt.month == date.month &&
           createdAt.day == date.day;
     }).toList();
+  }
+
+  Future<void> logout() async {
+    try {
+      await Supabase.instance.client.auth.signOut();
+      Get.offAllNamed(Routes.LOGIN);
+      SnackbarHandler.showSuccess('Berhasil', 'Anda telah logout');
+    } catch (e) {
+      SnackbarHandler.showError('Gagal Logout', e.toString());
+    }
   }
 }

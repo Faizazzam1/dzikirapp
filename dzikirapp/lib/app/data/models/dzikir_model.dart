@@ -29,12 +29,16 @@ class DzikirModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final map = <String, dynamic>{
       'user_id': userId,
       'ucapan': ucapan,
       'target': target,
       'jumlah': jumlah,
     };
+    if (createdAt != null) {
+      map['created_at'] = createdAt!.toIso8601String();
+    }
+    return map;
   }
 
   DzikirModel copyWith({
